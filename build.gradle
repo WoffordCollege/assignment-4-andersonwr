@@ -1,0 +1,44 @@
+buildscript {
+    dependencies {
+        classpath files(mkdir('build/classes/main'))
+        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+    }
+}
+plugins {
+  id 'org.roboscratch.robot' version '0.1.2'
+}
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'application'
+apply plugin: 'gradle-one-jar'
+
+version = '1.0'
+mainClassName = 'edu.wofford.Main'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Tic Tac Toe', 
+                   'Implementation-Version': version, 
+                   'Main-Class': mainClassName
+    }
+}
+
+task uberjar(type: OneJar) {
+    mainClass = mainClassName
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4+'
+}
+
+jacocoTestReport {
+    group = 'Reporting'
+    description = 'Generate Jacoco coverage reports after running tests.'
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+}
+
+runrobot.debugfile = 'debug.log'
+runrobot.dependsOn build
