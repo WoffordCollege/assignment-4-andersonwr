@@ -1,16 +1,18 @@
 buildscript {
     dependencies {
-        classpath files(mkdir('build/classes/main'))
+        classpath files(mkdir('build/classes/java/main'))
         classpath 'com.github.rholder:gradle-one-jar:1.0.4'
     }
 }
 plugins {
   id 'org.roboscratch.robot' version '0.1.2'
+  id 'com.github.kt3k.coveralls' version '2.6.3'
 }
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'application'
 apply plugin: 'gradle-one-jar'
+
 
 version = '1.0'
 mainClassName = 'edu.wofford.Main'
@@ -35,10 +37,16 @@ dependencies {
 }
 
 jacocoTestReport {
-    group = 'Reporting'
-    description = 'Generate Jacoco coverage reports after running tests.'
-    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
 }
 
+
 runrobot.debugfile = 'debug.log'
-runrobot.dependsOn build
+runrobot.dependsOn test
+
+check.dependsOn runrobot
+
+
