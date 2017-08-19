@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath files(mkdir('build/classes/java/main'))
+        classpath files(mkdir('build/classes/main'))
         classpath 'com.github.rholder:gradle-one-jar:1.0.4'
     }
 }
