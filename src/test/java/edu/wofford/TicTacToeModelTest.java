@@ -3,7 +3,7 @@ package edu.wofford;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class TicTacToeTest {
+public class TicTacToeModelTest {
 	private TicTacToeModel model;
     
     @Before
@@ -122,6 +122,19 @@ public class TicTacToeTest {
         assertEquals(TicTacToeModel.Result.NONE, model.getResult());
         model.setMarkAt(1, 2);
         assertEquals(TicTacToeModel.Result.TIE, model.getResult());
+	}
+	
+	@Test
+	public void testNoNewMarksAfterGameIsOver() {
+	    model.setMarkAt(0, 0);
+	    model.setMarkAt(0, 1);
+	    model.setMarkAt(1, 1);
+	    model.setMarkAt(0, 2);
+	    model.setMarkAt(2, 2);
+        assertEquals(TicTacToeModel.Result.XWIN, model.getResult());
+	    assertEquals(TicTacToeModel.Mark.EMPTY, model.getMarkAt(2, 0));
+	    model.setMarkAt(2, 0);
+	    assertEquals(TicTacToeModel.Mark.EMPTY, model.getMarkAt(2, 0));
 	}
     
 }

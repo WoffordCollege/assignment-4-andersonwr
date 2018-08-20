@@ -1,39 +1,66 @@
 buildscript {
+    repositories {
+        mavenCentral()
+    }
     dependencies {
-        classpath files(mkdir('build/classes/main'))
-        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+        classpath files(mkdir('build/classes/java/main'))
+        classpath 'org.robotframework:swinglibrary:1.9.8'
     }
 }
+
 plugins {
-  id 'org.roboscratch.robot' version '0.1.2'
-  id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'org.roboscratch.robot' version '0.1.2'
 }
+
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'application'
-apply plugin: 'gradle-one-jar'
-
-
-version = '1.0'
-mainClassName = 'edu.wofford.Main'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Tic Tac Toe', 
-                   'Implementation-Version': version, 
-                   'Main-Class': mainClassName
-    }
-}
-
-task uberjar(type: OneJar) {
-    mainClass = mainClassName
-}
+apply plugin: 'idea'
+apply plugin: 'eclipse'
 
 repositories {
     mavenCentral()
 }
 
+project.ext {
+    javaVersion = '1.8'
+    junitVersion = '4.12'
+}
+
+compileJava {
+    targetCompatibility = javaVersion
+    sourceCompatibility = javaVersion
+}
+
 dependencies {
-    testCompile 'junit:junit:4+'
+    compile 'org.slf4j:slf4j-api:1.7.18'
+    compile 'org.glassfish:javax.json:1.1.2'
+    testCompile 'junit:junit:' + junitVersion
+    testCompile "org.mockito:mockito-core:1.+"
+    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-proc:none', '-Xlint:unchecked', '-Xlint:deprecation']
+}
+
+version = '1.0'
+mainClassName = 'edu.wofford.Main'
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName,
+                   'Implementation-Title': 'Tic Tac Toe',
+                   'Implementation-Version': version
+    }
+}
+
+test {
+    jacoco {
+        append = false
+    }
 }
 
 jacocoTestReport {
@@ -41,11 +68,30 @@ jacocoTestReport {
         xml.enabled = true // coveralls plugin depends on xml format report
         html.enabled = true
     }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                     exclude: [
+                        '**/edu/wofford/Main*',
+                        '**/edu/wofford/ConsoleMain*',
+                        '**/edu/wofford/GuiMain*',
+                        '**/keywords/**'
+                    ])
+        })
+    }
 }
 
+javadoc {
+    options.with {
+        links 'https://docs.oracle.com/javase/8/docs/api/'
+    }
+    exclude 'edu/wofford/Main*'
+    exclude 'edu/wofford/ConsoleMain*'
+    exclude 'edu/wofford/GuiMain*'
+    exclude 'keywords/**'
+}
 
+runrobot.data_sources = 'src/acceptance'
+runrobot.outputdir = 'build/reports/robot'
 runrobot.debugfile = 'debug.log'
-runrobot.dependsOn test
-
-
-
+runrobot.dependsOn build

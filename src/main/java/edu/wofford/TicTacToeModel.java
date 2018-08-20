@@ -1,11 +1,11 @@
 package edu.wofford;
 
+
 public class TicTacToeModel {
 
-    public enum Mark {EMPTY, XMARK, OMARK};
-    public enum Result {XWIN, OWIN, TIE, NONE};
+    public enum Mark { EMPTY, XMARK, OMARK };
+    public enum Result { XWIN, OWIN, TIE, NONE };
 
-    
     public TicTacToeModel() {
 
     }
