@@ -1,5 +1,7 @@
 .gradle
 /build/
+.idea
+assignment-4-andersonwr.iml
 
 # Ignore Gradle GUI config
 gradle-app.setting
